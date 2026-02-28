@@ -1,4 +1,7 @@
-// Product data
+// ============================
+// Product Data
+// ============================
+
 const products = [
   { id: 1, name: "Product 1", price: 10 },
   { id: 2, name: "Product 2", price: 20 },
@@ -7,13 +10,16 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
+// 🔥 IMPORTANT: Must be "cart"
 const CART_STORAGE_KEY = "cart";
 
-// DOM elements
+// ============================
+// DOM Elements
+// ============================
+
 const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
-
 
 // ============================
 // Storage Helpers
@@ -23,8 +29,7 @@ function getCart() {
   try {
     const stored = sessionStorage.getItem(CART_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error("Error parsing cart:", error);
+  } catch {
     return [];
   }
 }
@@ -33,19 +38,18 @@ function saveCart(cart) {
   sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 }
 
-
 // ============================
 // Render Products
 // ============================
 
 function renderProducts() {
-  productList.innerHTML = ""; // prevent duplicate render
+  productList.innerHTML = "";
 
   products.forEach((product) => {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      <span>${product.name} - $${product.price}</span>
+      ${product.name} - $${product.price}
       <button class="add-to-cart-btn" data-id="${product.id}">
         Add to Cart
       </button>
@@ -55,7 +59,6 @@ function renderProducts() {
   });
 }
 
-
 // ============================
 // Render Cart
 // ============================
@@ -64,11 +67,13 @@ function renderCart() {
   const cart = getCart();
   cartList.innerHTML = "";
 
+  if (cart.length === 0) return;
+
   cart.forEach((item) => {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      <span>${item.name} - $${item.price}</span>
+      ${item.name} - $${item.price}
       <button class="remove-btn" data-id="${item.id}">
         Remove
       </button>
@@ -77,7 +82,6 @@ function renderCart() {
     cartList.appendChild(li);
   });
 }
-
 
 // ============================
 // Cart Operations
@@ -88,12 +92,7 @@ function addToCart(productId) {
   if (!product) return;
 
   const cart = getCart();
-
-  cart.push({
-    id: product.id,
-    name: product.name,
-    price: product.price,
-  });
+  cart.push(product);
 
   saveCart(cart);
   renderCart();
@@ -101,7 +100,6 @@ function addToCart(productId) {
 
 function removeFromCart(productId) {
   const cart = getCart();
-
   const updatedCart = cart.filter((item) => item.id !== productId);
 
   saveCart(updatedCart);
@@ -109,16 +107,14 @@ function removeFromCart(productId) {
 }
 
 function clearCart() {
-  saveCart([]);
-  renderCart();
+  sessionStorage.removeItem(CART_STORAGE_KEY);
+  cartList.innerHTML = "";
 }
-
 
 // ============================
 // Event Listeners
 // ============================
 
-// Add to cart (event delegation)
 productList.addEventListener("click", (e) => {
   if (e.target.classList.contains("add-to-cart-btn")) {
     const productId = Number(e.target.dataset.id);
@@ -126,7 +122,6 @@ productList.addEventListener("click", (e) => {
   }
 });
 
-// Remove from cart (event delegation)
 cartList.addEventListener("click", (e) => {
   if (e.target.classList.contains("remove-btn")) {
     const productId = Number(e.target.dataset.id);
@@ -134,9 +129,7 @@ cartList.addEventListener("click", (e) => {
   }
 });
 
-// Clear cart
 clearCartBtn.addEventListener("click", clearCart);
-
 
 // ============================
 // Initial Render
