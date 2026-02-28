@@ -1,5 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
 // Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
@@ -16,76 +14,133 @@ const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
+
+// ============================
+// Storage Helpers
+// ============================
+
 function getCart() {
   try {
-    const stored = window.sessionStorage.getItem(CART_STORAGE_KEY);
+    const stored = sessionStorage.getItem(CART_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
-  } catch {
+  } catch (error) {
+    console.error("Error parsing cart:", error);
     return [];
   }
 }
 
 function saveCart(cart) {
-  window.sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 }
 
-// Render product list
+
+// ============================
+// Render Products
+// ============================
+
 function renderProducts() {
+  productList.innerHTML = ""; // prevent duplicate render
+
   products.forEach((product) => {
     const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
+
+    li.innerHTML = `
+      <span>${product.name} - $${product.price}</span>
+      <button class="add-to-cart-btn" data-id="${product.id}">
+        Add to Cart
+      </button>
+    `;
+
     productList.appendChild(li);
   });
 }
 
-// Render cart list
+
+// ============================
+// Render Cart
+// ============================
+
 function renderCart() {
   const cart = getCart();
   cartList.innerHTML = "";
+
   cart.forEach((item) => {
     const li = document.createElement("li");
-    li.innerHTML = `${item.name} - $${item.price}`;
+
+    li.innerHTML = `
+      <span>${item.name} - $${item.price}</span>
+      <button class="remove-btn" data-id="${item.id}">
+        Remove
+      </button>
+    `;
+
     cartList.appendChild(li);
   });
 }
 
-// Add item to cart
+
+// ============================
+// Cart Operations
+// ============================
+
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
+
   const cart = getCart();
-  cart.push({ id: product.id, name: product.name, price: product.price });
+
+  cart.push({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+  });
+
   saveCart(cart);
   renderCart();
 }
 
-// Remove item from cart
 function removeFromCart(productId) {
   const cart = getCart();
-  const index = cart.findIndex((item) => item.id === productId);
-  if (index !== -1) {
-    cart.splice(index, 1);
-    saveCart(cart);
-    renderCart();
-  }
-}
 
-// Clear cart
-function clearCart() {
-  window.sessionStorage.removeItem(CART_STORAGE_KEY);
-  cartList.innerHTML = "";
+  const updatedCart = cart.filter((item) => item.id !== productId);
+
+  saveCart(updatedCart);
   renderCart();
 }
 
-// Event listeners
+function clearCart() {
+  saveCart([]);
+  renderCart();
+}
+
+
+// ============================
+// Event Listeners
+// ============================
+
+// Add to cart (event delegation)
 productList.addEventListener("click", (e) => {
   if (e.target.classList.contains("add-to-cart-btn")) {
-    addToCart(Number(e.target.dataset.id));
+    const productId = Number(e.target.dataset.id);
+    addToCart(productId);
   }
 });
 
+// Remove from cart (event delegation)
+cartList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove-btn")) {
+    const productId = Number(e.target.dataset.id);
+    removeFromCart(productId);
+  }
+});
+
+// Clear cart
 clearCartBtn.addEventListener("click", clearCart);
 
-// Initial render
+
+// ============================
+// Initial Render
+// ============================
+
 renderProducts();
 renderCart();
