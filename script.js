@@ -7,7 +7,7 @@ const products = [
   { id: 5, name: "Product 5", price: 50 },
 ];
 
-const CART_STORAGE_KEY = "shoppingCart";
+const CART_STORAGE_KEY = "cart";
 
 // DOM elements
 const productList = document.getElementById("product-list");
