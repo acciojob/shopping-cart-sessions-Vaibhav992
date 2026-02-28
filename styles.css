@@ -1,1 +1,93 @@
 /*  your css code here. If applicable */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+  padding: 2rem;
+  background: #1a1a1a;
+  color: #fff;
+  min-height: 100vh;
+}
+
+h1 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+h2 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+#product-list,
+#cart-list {
+  list-style: none;
+}
+
+#product-list li,
+#cart-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #2d2d2d;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+#product-list li {
+  gap: 1rem;
+}
+
+#cart-list li {
+  gap: 0.5rem;
+}
+
+#product-list li .product-info,
+#cart-list li .cart-item-info {
+  flex: 1;
+}
+
+#product-list li .product-name,
+#cart-list li .cart-item-name {
+  font-weight: 500;
+}
+
+#product-list li .product-price,
+#cart-list li .cart-item-price {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: #fff;
+  color: #000;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#clear-cart-btn {
+  margin-top: 1rem;
+  background: #e53935;
+  color: #fff;
+}
+
+#cart-list:empty::after {
+  content: "Your cart is empty.";
+  display: block;
+  color: #888;
+  font-style: italic;
+  padding: 0.5rem 0;
+}
