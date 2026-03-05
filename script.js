@@ -12,6 +12,7 @@ const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
+
 // ================= STORAGE =================
 
 function getCart() {
@@ -23,12 +24,13 @@ function saveCart(cart) {
   sessionStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 }
 
+
 // ================= RENDER PRODUCTS =================
 
 function renderProducts() {
-  productList.innerHTML = "";
 
-  products.forEach((product) => {
+  products.forEach(product => {
+
     const li = document.createElement("li");
 
     const btn = document.createElement("button");
@@ -39,74 +41,76 @@ function renderProducts() {
     li.appendChild(btn);
 
     productList.appendChild(li);
+
   });
+
 }
+
 
 // ================= RENDER CART =================
 
 function renderCart() {
+
   const cart = getCart();
   cartList.innerHTML = "";
 
-  cart.forEach((item) => {
+  cart.forEach(item => {
+
     const li = document.createElement("li");
 
-    const btn = document.createElement("button");
-    btn.textContent = "Remove";
-    btn.dataset.id = item.id;
-
-    li.append(`${item.name} - $${item.price} `);
-    li.appendChild(btn);
+    li.textContent = `${item.name} - $${item.price}`;
 
     cartList.appendChild(li);
+
   });
+
 }
 
-// ================= CART ACTIONS =================
+
+// ================= ADD TO CART =================
 
 function addToCart(productId) {
-  const product = products.find((p) => p.id === productId);
-  if (!product) return;
+
+  const product = products.find(p => p.id === productId);
 
   const cart = getCart();
-  cart.push(product);   // ✅ IMPORTANT: push, do NOT overwrite
+
+  cart.push(product);
 
   saveCart(cart);
+
   renderCart();
+
 }
 
-function removeFromCart(productId) {
-  const cart = getCart();
 
-  const index = cart.findIndex((item) => item.id === productId);
-  if (index !== -1) {
-    cart.splice(index, 1);  // remove only one instance
-  }
-
-  saveCart(cart);
-  renderCart();
-}
+// ================= CLEAR CART =================
 
 function clearCart() {
-  sessionStorage.removeItem(CART_STORAGE_KEY);
-  cartList.innerHTML = "";
+
+  saveCart([]);   // keep key but empty array
+
+  renderCart();
+
 }
+
 
 // ================= EVENTS =================
 
-productList.addEventListener("click", (e) => {
-  if (e.target.tagName === "BUTTON") {
-    addToCart(Number(e.target.dataset.id));
-  }
-});
+productList.addEventListener("click", function(e){
 
-cartList.addEventListener("click", (e) => {
-  if (e.target.tagName === "BUTTON") {
-    removeFromCart(Number(e.target.dataset.id));
+  if(e.target.tagName === "BUTTON"){
+
+    const id = Number(e.target.dataset.id);
+
+    addToCart(id);
+
   }
+
 });
 
 clearCartBtn.addEventListener("click", clearCart);
+
 
 // ================= INIT =================
 
